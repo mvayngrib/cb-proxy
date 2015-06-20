@@ -18,14 +18,14 @@ var db = level(dbPath, {
 var queue = new Queue(THROTTLE)
 
 app.get('/', function (req, res) {
-  var url = req.query.url
+  var url = req.query.url.replace('http:', 'https:')
   if (!isCacheable(url)) {
     debug('forwarding', url)
     return queue.push(function (cb) {
       fetch(url, function (err, _res) {
         cb(err)
 
-        if (err) return fail(work.res, err.message)
+        if (err) return fail(res, err.message)
 
         res.send(_res.body)
       })
@@ -43,13 +43,13 @@ app.get('/', function (req, res) {
 
     debug('fetching', missing)
     queue.push(function (cb) {
-      fetch(toUrl(missing), function (err, res) {
+      fetch(toUrl(missing), function (err, _res) {
         cb(err)
 
         if (err) return fail(res, err.message)
 
-        var status = res.body.status
-        var data = res.body.data
+        var status = _res.body.status
+        var data = _res.body.data
         if (status !== 'success') return fail(res, data)
 
         if (!Array.isArray(data)) data = [data]
