@@ -8,8 +8,8 @@ function Queue(wait) {
   this._queue = []
 }
 
-Queue.prototype.push = function (url, cb) {
-  this._queue.push(url)
+Queue.prototype.push = function (task) {
+  this._queue.push(task)
   this._process()
 }
 
