@@ -27,6 +27,7 @@
     "throttleme": "^1.0.1"
   },
   "devDependencies": {
+    "cb-blockr": "git://github.com/tradle/cb-blockr",
     "pre-commit": "^1.0.10",
     "standard": "^4.3.1"
   },
