@@ -8,7 +8,7 @@ Helps be a better user of blockchain APIs, and avoid getting throttled
 
 # Motivation
 
-Fetching a raw block from blockr requires (1 + block.transactions.length) calls, which had me hitting the rate limit almost immediately. This module does basic throttling and stores cacheable results in a local database, to avoid hitting blockr.io more than necessary.
+Fetching a raw block from blockr requires upwards of (1 + block.transactions.length) calls, which had me hitting the rate limit almost immediately. This module does basic throttling and stores cacheable results in a local database, to avoid hitting blockr.io more than necessary.
 
 # Support
 

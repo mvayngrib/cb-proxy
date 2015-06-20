@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+var debug = require('debug')('cb-proxy')
 var app = require('express')()
 var jsend = require('jsend')
 var superagent = require('superagent')
@@ -19,6 +20,7 @@ var queue = new Queue(THROTTLE)
 app.get('/', function (req, res) {
   var url = req.query.url
   if (!isCacheable(url)) {
+    debug('forwarding', url)
     return queue.push(function (cb) {
       fetch(url, function (err, _res) {
         cb(err)
@@ -39,6 +41,7 @@ app.get('/', function (req, res) {
 
     if (!missing.length) return success()
 
+    debug('fetching', missing)
     queue.push(function (cb) {
       fetch(toUrl(missing), function (err, res) {
         cb(err)
@@ -53,12 +56,12 @@ app.get('/', function (req, res) {
 
         for (var i = 0, j = 0; i < results.length; i++) {
           if (!results[i]) {
-            // var url = base + '/' + ids[i]
             results[i] = data[j++]
           }
         }
 
         success()
+        debug('saving', missing)
         db.batch(data.map(function (item, i) {
           return { type: 'put', key: missing[i], value: item }
         }), function (err) {

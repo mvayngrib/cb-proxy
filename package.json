@@ -17,12 +17,14 @@
   "author": "Mark Vayngrib <mark.vayngrib@lablz.com> (http://github.com/mvayngrib)",
   "license": "ISC",
   "dependencies": {
+    "debug": "^2.2.0",
     "express": "^4.12.4",
     "jsend": "^1.0.0",
     "level": "^1.1.0",
     "level-jobs": "^0.5.0",
     "minimist": "^1.1.1",
-    "superagent": "^1.2.0"
+    "superagent": "^1.2.0",
+    "throttleme": "^1.0.1"
   },
   "devDependencies": {
     "pre-commit": "^1.0.10",

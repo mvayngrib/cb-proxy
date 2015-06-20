@@ -1,5 +1,5 @@
 
-var throttle = require('./throttle')
+var throttle = require('throttleme')
 
 module.exports = Queue
 
