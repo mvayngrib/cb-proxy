@@ -1,8 +1,8 @@
 {
   "name": "cb-proxy",
   "version": "1.0.0",
-  "description": "proxy for blockchain APIs, that stores results of cacheable calls",
-  "main": "app.js",
+  "description": "proxy for common-blockchain API, that temporarily caches calls. Currently supports Blockr",
+  "main": "index.js",
   "bin": {
     "cb-proxy": "app.js"
   },
@@ -22,12 +22,15 @@
     "jsend": "^1.0.0",
     "level": "^1.1.0",
     "level-jobs": "^0.5.0",
+    "lru-cache": "^4.0.0",
     "minimist": "^1.1.1",
+    "object.pick": "^1.1.1",
     "superagent": "^1.2.0",
-    "throttleme": "^1.0.1"
+    "throttleme": "^1.0.1",
+    "typeforce": "^1.6.1",
+    "xtend": "^4.0.1"
   },
   "devDependencies": {
-    "cb-blockr": "git://github.com/tradle/cb-blockr",
     "pre-commit": "^1.0.10",
     "standard": "^4.3.1"
   },
@@ -36,6 +39,7 @@
     "url": "https://github.com/mvayngrib/cb-proxy"
   },
   "keywords": [
+    "proxy",
     "blockr",
     "bitcoin",
     "common-blockchain"
