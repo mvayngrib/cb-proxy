@@ -1,5 +1,5 @@
 {
-  "name": "cb-proxy",
+  "name": "@tradle/cb-proxy",
   "version": "1.0.0",
   "description": "proxy for common-blockchain API, that temporarily caches calls. Currently supports Blockr",
   "main": "index.js",
