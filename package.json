@@ -17,6 +17,7 @@
   "author": "Mark Vayngrib <mark.vayngrib@lablz.com> (http://github.com/mvayngrib)",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.14.2",
     "debug": "^2.2.0",
     "express": "^4.12.4",
     "jsend": "^1.0.0",

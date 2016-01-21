@@ -7,6 +7,7 @@ var typeforce = require('typeforce')
 var Cache = require('lru-cache')
 var extend = require('xtend')
 var pick = require('object.pick')
+var bodyParser = require('body-parser')
 var Queue = require('./queue')
 var THROTTLE = 100
 var DEFAULT_SAVE_INTERVAL = 60000
@@ -22,21 +23,24 @@ var noop = function () {}
 module.exports = function (opts) {
   typeforce({
     router: typeforce.oneOf('EventEmitter', 'Function'),
-    path: 'String',
+    path: '?String',
     throttle: '?Number',
     max: '?Number',
     maxAge: '?Number'
   }, opts)
 
   var cachePath = opts.path
+  var cachedOnDisk = !!cachePath
   var cache = new Cache(extend(CACHE_DEFAULTS, pick(opts, ['max', 'maxAge'])))
 
-  try {
-    var savedCached = fs.readFileSync(cachePath)
-    if (savedCached) {
-      cache.load(JSON.parse(savedCached))
-    }
-  } catch (err) {}
+  if (cachedOnDisk) {
+    try {
+      var savedCached = fs.readFileSync(cachePath)
+      if (savedCached) {
+        cache.load(JSON.parse(savedCached))
+      }
+    } catch (err) {}
+  }
 
   var resumeTimeout
   var needsWriteToDisk
@@ -45,6 +49,18 @@ module.exports = function (opts) {
   var throttle = isNaN(opts.throttle) ? THROTTLE : opts.throttle
   var router = opts.router
   var queue = new Queue(throttle)
+  router.post('^*$', bodyParser.json({}))
+  router.post('^*$', function (req, res) {
+    superagent
+      .post(req.query.url)
+      .send(req.body)
+      .end(function (err, _res) {
+        if (err) { fail(res, err.message) }
+
+        res.status(_res.status).json(_res.body)
+      })
+  })
+
   router.get('/', function (req, res) {
     var waitTime = queue.waitTime()
     var url = req.query.url.replace('http:', 'https:')
@@ -121,6 +137,8 @@ module.exports = function (opts) {
 
   function saveToDisk (cb) {
     cb = cb || noop
+    if (!cachedOnDisk) return cb()
+
     if (needsWriteToDisk) {
       debug('saving to disk')
       needsWriteToDisk = false
