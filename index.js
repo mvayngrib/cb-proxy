@@ -55,7 +55,7 @@ module.exports = function (opts) {
       .post(req.query.url)
       .send(req.body)
       .end(function (err, _res) {
-        if (err) { fail(res, err.message) }
+        if (err) return fail(res, err.message)
 
         res.status(_res.status).json(_res.body)
       })
