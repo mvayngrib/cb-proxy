@@ -89,15 +89,16 @@ module.exports = function (opts) {
         return !results[i]
       })
 
+    debug('found cached', results.length - missing.length)
     if (!missing.length) return success()
 
     if (waitTime > REJECT_WAIT_TIME) {
       return failTooMany(res)
     }
 
-    debug('fetching', missing)
+    debug('fetching', missing.length, 'from', getBase(url))
     queue.push(function (cb) {
-      fetch(toUrl(missing), function (err, _res) {
+      fetch(toUrl(missing, url), function (err, _res) {
         cb(err)
 
         if (err && /many requests/i.test(err.message)) {
@@ -158,8 +159,8 @@ module.exports = function (opts) {
 }
 
 function isCacheable (url) {
-  var match = url.match(/([a-zA-Z]+)\.blockr.io\/api\/v\d+\/(address|block|tx)\/(unconfirmed\/)?(txs|info|raw)\/([^\?]+)$/)
-  return match && match[4] && match[4].split(/\s+/).indexOf('last') === -1
+  var match = url.match(/(?:[a-zA-Z]+)\.blockr.io\/api\/v\d+\/(?:address|block|tx)\/(?:unconfirmed|txs|info|raw)\/([^\?]+)/)
+  return match && match[1] && match[1].split(/\s+/).indexOf('last') === -1
 }
 
 function fail (res, msg) {
@@ -172,21 +173,28 @@ function getBase (url) {
 
 function toUrls (url) {
   var base = getBase(url)
-  var ids = url.slice(base.length + 1).split(',')
+  var qIdx = url.indexOf('?')
+  var endIdx = qIdx !== -1 ? qIdx : url.length
+  var ids = url.slice(base.length + 1, endIdx).split(',')
   return ids.map(function (id) {
     return base + '/' + id
   })
 }
 
-function toUrl (urls) {
+function toUrl (urls, originalUrl) {
+  var suffix = ''
+  var qIdx = originalUrl.indexOf('?')
+  if (qIdx !== -1) {
+    suffix = originalUrl.slice(qIdx)
+  }
+
   var base = getBase(urls[0])
   return base + '/' + urls.map(function (url) {
     return url.slice(base.length + 1)
-  }).join(',')
+  }).join(',') + suffix
 }
 
 function fetch (url, cb) {
-  debug('fetching', url)
   return superagent.get(url).end(cb)
 }
 
