@@ -25,6 +25,8 @@ Queue.prototype._processOne = function () {
   this._processing = true
 
   var worker = this._queue.shift()
+  if (!worker) return
+
   worker(function () {
     self._processing = false
     self._process()
