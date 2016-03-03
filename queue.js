@@ -22,10 +22,10 @@ Queue.prototype._process = function () {
 
 Queue.prototype._processOne = function () {
   var self = this
-  this._processing = true
-
   var worker = this._queue.shift()
   if (!worker) return
+
+  this._processing = true
 
   worker(function () {
     self._processing = false
